@@ -15,7 +15,7 @@ CreditRiskModel is a predictive analytics app designed for **loan risk assessmen
 
 ### 📸 Demo
 
-![demo](image1.png)
+![demo](resources/im2L.png)
 
 ---
 
