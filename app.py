@@ -66,13 +66,13 @@ with st.container(border=True):
         )
     with col6:
         if income==0:
-            l_2_i=0
+            loan_to_income=0
         else:
-            l_2_i=loan_amount/income
+            loan_to_income=loan_amount/income
         st.markdown('loan_amount/income', help="Ratio of total loan amount to annual income.")
 
-        loan_to_income=st.markdown(f""" <div style = 'background-color: gray;'>
-        {l_2_i}
+        st.markdown(f""" <div style = 'background-color: gray;'>
+        { loan_to_income}
                                                  </div>""" ,unsafe_allow_html=True,
 
         )
@@ -127,7 +127,7 @@ input_features = {
     'income': income,
     'loan_amount': loan_amount,
     'loan_tenure_months': loan_tenure_months,
-    'number_of_open_accounts': number_of_open_accounts,
+    'num_open_accounts': number_of_open_accounts,
     'credit_utilization_ratio': credit_utilization_ratio,
     'loan_to_income': loan_to_income,
     'delinquency_ratio': delinquency_ratio,
@@ -154,11 +154,14 @@ if calculate_button:
     with st.spinner('Calculating score...'):
 
         # calculate  probability, score, risk_level
-        probability, score, risk_level, color = predict_score(input_features)
-        # try:
-        #     probability, score, risk_level, color = predict_score(input_features)
-        # except Exception as e:
-        #     st.error(f"An error occurred during SCORE calculation: {e}")
+        # probability, score, risk_level, color = predict_score(input_features)
+        try:
+            probability, score, risk_level, color = predict_score(input_features)
+
+        except Exception as e:
+            st.error(f"An error occurred during SCORE calculation: {e}")
+
+        probability = probability * 100
 
         if score is not None:
             # Display results in a visually appealing way
@@ -167,7 +170,7 @@ if calculate_button:
 
             result_col1, result_col2, result_col3 = st.columns(3)
             st.markdown(
-                f"**Probability:** <span style='color:{color}; font-weight:bold;'>{probability:0.0f}%</span>",
+                f"<h3>**Probability:** <span style='color:{color}; font-weight:bold;'>{float(probability):.2f}%</span></h3>",
                 unsafe_allow_html=True)
 
             with result_col2:
@@ -175,17 +178,17 @@ if calculate_button:
 
                 st.markdown(
                     f"""
-                    <div style='text-align: center; padding: 20px; border: 3px solid {color}; border-radius: 10px;'>
-                        <h2 style='color: #4a4a4a; margin-bottom: 5px;'>Predicted Score</h2>
-                        <h1 style='color: {color}; font-size: 4em; margin-top: 0px;'>{score}</h1>
+                   <div style='width: 90%; margin: auto; text-align: center; padding: 0.8px; border: 2px solid {color}; border-radius: 5px;'>
+                        <h2 style='color: #4a4a4a; margin: 0; font-size: 1.5em;'>Predicted Score</h2>
+                        <h1 style='color: {color}; font-size: 2em; margin: 0;'>{float(score):.0f}</h1>
                     </div>
                     """,
                     unsafe_allow_html=True
                 )
 
-            st.markdown(f"**Risk Classification:** <span style='color:{color}; font-weight:bold;'>{risk_level}</span>",
+            st.markdown(f"<h3>**Risk Classification:** <span style='color:{color}; font-weight:bold;'>{risk_level}</span></h3>",
                         unsafe_allow_html=True)
 
-            # Show the raw inputs (optional, good for debugging)
-            with st.expander("Show Detailed Input Data"):
-                st.dataframe(pd.DataFrame(input_features, index=["Value"]).T)
+            # # Show the raw inputs (optional, good for debugging)
+            # with st.expander("Show Detailed Input Data"):
+            #     st.dataframe(pd.DataFrame(input_features, index=["Value"]).T)

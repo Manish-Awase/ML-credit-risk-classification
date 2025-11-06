@@ -11,36 +11,36 @@ features = model_data[ 'features' ]
 cols_to_scale = model_data['cols_to_scale']
 
 
-def prepare_df(features):
+def prepare_df(in_features):
 
-    input_features = {
-        'age': features['age'],
-        'income': features['income'],
-        'loan_amount': features['loan_amount'],
-        'loan_tenure_months': features['loan_tenure_months'],
-        'number_of_open_accounts': features['number_of_open_accounts'],
-        'credit_utilization_ratio': features['credit_utilization_ratio'],
-        'loan_to_income': features['loan_to_income'],
-        'delinquency_ratio': features['delinquency_ratio'],
-        'avg_dpd_per_delinquency': features['avg_dpd_per_delinquency'],
-        'residence_type_Owned': 1 if features['residence_type']=='Owned' else 0,
-        'residence_type_Rented': 1 if features['residence_type']=='Rented' else 0,
-        'loan_purpose_Personal': 1 if features['loan_purpose']=='Personal' else 0,
-        'loan_purpose_Education': 1 if features['loan_purpose']=='Education' else 0,
-        'loan_type_Unsecured': 1 if features['loan_type']=='Unsecured' else 0,
-        # additional features (Dummy)
-        'gst': 1,
-        'zipcode': 1,
-        'enquiry_count': 1,
-        'processing_fee': 1,
-        'sanction_amount': 1,
-        'net_disbursement': 1,
-        'number_of_dependants': 1,
-        'principal_outstanding': 1,
-        'years_at_current_address': 1,
-        'number_of_closed_accounts': 1,
-        'bank_balance_at_application': 1
+    input_features =  input_data = {
+        'age': in_features['age'] ,
+        'loan_tenure_months': in_features['loan_tenure_months'] ,
+        'number_of_open_accounts': in_features['num_open_accounts'] ,
+        'credit_utilization_ratio': in_features['credit_utilization_ratio'] ,
+        'loan_to_income': in_features['loan_to_income'],
+        'delinquency_ratio': in_features['delinquency_ratio'] ,
+        'avg_dpd_per_delinquency': in_features['avg_dpd_per_delinquency'] ,
+        'residence_type_Owned': 1 if in_features['residence_type']  == 'Owned' else 0,
+        'residence_type_Rented': 1 if in_features['residence_type']  == 'Rented' else 0,
+        'loan_purpose_Education': 1 if in_features['loan_purpose']  == 'Education' else 0,
+        'loan_purpose_Home': 1 if in_features['loan_purpose']  == 'Home' else 0,
+        'loan_purpose_Personal': 1 if in_features['loan_purpose']  == 'Personal' else 0,
+        'loan_type_Unsecured': 1 if in_features['loan_type'] == 'Unsecured' else 0,
+        # additional dummy fields just for scaling purpose
+        'number_of_dependants': 1,  # Dummy value
+        'years_at_current_address': 1,  # Dummy value
+        'zipcode': 1,  # Dummy value
+        'sanction_amount': 1,  # Dummy value
+        'processing_fee': 1,  # Dummy value
+        'gst': 1,  # Dummy value
+        'net_disbursement': 1,  # Computed dummy value
+        'principal_outstanding': 1,  # Dummy value
+        'bank_balance_at_application': 1,  # Dummy value
+        'number_of_closed_accounts': 1,  # Dummy value
+        'enquiry_count': 1  # Dummy value
     }
+
     df=pd.DataFrame([input_features])
     # perform scaling
     df[cols_to_scale]=scaler.transform(df[cols_to_scale])
@@ -48,7 +48,7 @@ def prepare_df(features):
     return df
 
 def find_score(prepared_df, base_score=300, scale_length=600):
-    x=prepared_df.values()*model.coef_.T+model.intercept_
+    x = np.dot(prepared_df.values, model.coef_.T) + model.intercept_
     # Apply the logistic function to calculate the probability
     default_probability=1 / (1+np.exp(-x))
     non_default_probability=1-default_probability
@@ -72,9 +72,9 @@ def toget_risk_level(score):
     else:
         return 'Undefined' ,"black" # in case of any unexpected score
 
-def predict_score(features):
+def predict_score(in_features):
     # prepare input dataframe for model
-    input_df=prepare_df(features)
+    input_df=prepare_df(in_features)
     # find credit score
     probability,score=find_score(input_df)
     # find credit score level
