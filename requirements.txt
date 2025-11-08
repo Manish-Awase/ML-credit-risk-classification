@@ -5,3 +5,5 @@ numpy
 joblib
 xgboost==2.0.3
 requests
+pydantic
+fastapi
