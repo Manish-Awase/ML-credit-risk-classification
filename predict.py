@@ -13,7 +13,7 @@ cols_to_scale = model_data['cols_to_scale']
 
 def prepare_df(in_features):
 
-    input_features =  input_data = {
+    input_features = {
         'age': in_features['age'] ,
         'loan_tenure_months': in_features['loan_tenure_months'] ,
         'number_of_open_accounts': in_features['num_open_accounts'] ,
