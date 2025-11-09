@@ -23,6 +23,23 @@ class feature_data_types (BaseModel):
     loan_purpose: str    # Typically a categorical string
     loan_type: str        # Typically a categorical string
 
+sample_inputs={
+    "age": 30,
+    "income": 75000,
+    "loan_amount": 150000,
+    "loan_tenure_months": 60,
+    "num_open_accounts": 4,
+    "credit_utilization_ratio": 25.5,
+    "loan_to_income": 2.0,
+    "delinquency_ratio": 0.5,
+    "avg_dpd_per_delinquency": 15.0,
+    "residence_type": "Owned",
+    "loan_purpose":"Home",
+    "loan_type": "Secured"
+}
+@app.get("/sample_inputs")
+def inputs():
+    return sample_inputs
 
 class output_datatype(BaseModel):
     probability: float
@@ -41,18 +58,3 @@ def predict(input_features:feature_data_types):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-    # print(probability, score, risk_level)
-# {
-#     "age": 30,
-#     "income": 75000,
-#     "loan_amount": 150000,
-#     "loan_tenure_months": 60,
-#     "num_open_accounts": 4,
-#     "credit_utilization_ratio": 25.5,
-#     "loan_to_income": 2.0,
-#     "delinquency_ratio": 0.5,
-#     "avg_dpd_per_delinquency": 15.0,
-#     "residence_type": "Owned",
-#     "loan_purpose":"Home",
-#     "loan_type": "Secured"
-# }
